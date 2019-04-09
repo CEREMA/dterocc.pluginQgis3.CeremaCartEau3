@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 3.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 3.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=Cerema Cart'Eau
+qgisMinimumVersion=3.0
+description=Extraction des zones eau Plugin Cerema
+version=3.0
+author=Christelle Bosc & Gilles Fouvet
+email=Christelle.Bosc@cerema.fr
+
+about=Zone eau par seuillage et vectorisation utilisation du NDVI ou NDWI (pour image optique) ou utilisation du despeckle (pour image radar).
+
+tracker=http://bugs
+repository=http://repo
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=python
+
+homepage=http://homepage
+category=Plugins
+icon=icons/pictoinondation.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+

@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/plugins/CeremaCartEau3" >
+        <file>icons/cerema.png</file>
+        <file>icons/reload.png</file>
+        <file>icons/fdroit.png</file>
+        <file>icons/about.png</file>
+        <file>icons/info.png</file>
+        <file>icons/croixrouge.png</file>
+        <file>icons/pictoinondation.png</file>
+    </qresource>
+</RCC>
