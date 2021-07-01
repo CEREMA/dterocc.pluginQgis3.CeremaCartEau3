@@ -10,7 +10,7 @@ processingRaster
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Christelle Bosc & Gilles Fouvet
 
-        email                : Christelle.Bosc@cerema.fr
+        email                : Gilles.Fouvet@cerema.fr
  ***************************************************************************/
 
 /***************************************************************************
@@ -92,7 +92,7 @@ def computeNdvi(dlg, conf, dir_raster_src, dir_dest, rasterName, ndviName, exten
             expression = '(im1b%s - im1b%s)/(im1b%s + im1b%s)' %(str(num_channel_nir), str(num_channel_red), str(num_channel_nir), str(num_channel_red))
             #processing.algorithmHelp("otb:BandMath")
             #processing.runalg('otb:bandmath', rasterPath, '128',expression, ndviPath)
-            parameters = {"il":[rasterPath], "out":ndviPath, "exp":expression, "outputpixeltype":2, "ram":128}
+            parameters = {"il":[rasterPath], "out":ndviPath, "exp":expression, "outputpixeltype":5}
             processing.run('otb:BandMath', parameters)
         except:
             messErreur(dlg,"Erreur de traitement sur otb:BandMath ndvi.")
@@ -197,7 +197,7 @@ def computeNdwi2(dlg, conf, dir_raster_src, dir_dest, rasterName, ndwi2Name, ext
             expression = '(im1b%s - im1b%s)/(im1b%s + im1b%s)' %(str(num_channel_green), str(num_channel_nir), str(num_channel_green), str(num_channel_nir))
             processing.algorithmHelp("otb:BandMath")
             #processing.runalg('otb:bandmath', rasterPath, '128',expression, ndwi2Path)
-            parameters = {"il":[rasterPath], "out":ndwi2Path, "exp":expression, "outputpixeltype":2, "ram":128}
+            parameters = {"il":[rasterPath], "out":ndwi2Path, "exp":expression, "outputpixeltype":5}
             processing.run('otb:BandMath', parameters)
         except:
             messErreur(dlg, "Erreur de traitement sur otb:BandMath ndwi2.")
@@ -279,7 +279,7 @@ def despeckeleLee(dlg, conf, dir_raster_src, dir_dest, rasterName, leeName, exte
         try:
             #processing.algorithmHelp("otb:Despeckle")
             #processing.runalg('otb:despecklelee', rasterPath, '128', 0, radius, nb_looks, leePath)
-            parameters = {"in":rasterPath, "out":leePath, "filter":'lee', "filter.lee.rad":radius, "filter.lee.nblooks":nb_looks, "outputpixeltype":2, "ram":128}
+            parameters = {"in":rasterPath, "out":leePath, "filter":'lee', "filter.lee.rad":radius, "filter.lee.nblooks":nb_looks, "outputpixeltype":5}
             processing.run('otb:Despeckle', parameters)
         except:
             messErreur(dlg, "Erreur de traitement sur otb:Despeckle Lee.")
@@ -349,7 +349,7 @@ def despeckeleGamma(dlg, conf, dir_raster_src, dir_dest, rasterName, gammaName, 
         try:
             #processing.algorithmHelp("otb:Despeckle")
             #processing.runalg('otb:despecklegammamap', rasterPath, '128', 0, radius, nb_looks, gammaPath)
-            parameters = {"in":rasterPath, "out":gammaPath, "filter":'gammamap', "filter.gammamap.rad":radius, "filter.gammamap.nblooks":nb_looks, "outputpixeltype":2, "ram":128}
+            parameters = {"in":rasterPath, "out":gammaPath, "filter":'gammamap', "filter.gammamap.rad":radius, "filter.gammamap.nblooks":nb_looks, "outputpixeltype":5}
             processing.run('otb:Despeckle', parameters)
         except:
             messErreur(dlg,"Erreur de traitement sur otb:Despeckle Gamma.")
@@ -471,7 +471,7 @@ def computeMaskThreshold(dlg, conf, dir_raster_treat, dir_dest, rasterTreatName,
                     expression = 'im1b1' + direction_operator_str + newSeuilStr + '?1:2'
                     #processing.algorithmHelp("otb:BandMath") 
                     #processing.runalg('otb:bandmath', rasterTreatPath, '128',expression ,layerSeuilPath)
-                    parameters = {"il":[rasterTreatPath], "out":layerSeuilPath, "exp":expression, "outputpixeltype":2, "ram":128}
+                    parameters = {"il":[rasterTreatPath], "out":layerSeuilPath, "exp":expression, "outputpixeltype":0}
                     processing.run('otb:BandMath', parameters)                  
                 except:               
                     messErreur(dlg, "Erreur lors du lancement de otb:BandMath seuillage.")
@@ -569,7 +569,7 @@ def filterRaster(dlg, conf, dir_dest, rasterSeuilName, rasterFilterName):
         try:
             #processing.algorithmHelp("otb:ClassificationMapRegularization")
             #processing.runalg('otb:classificationmapregularization', layerSeuilPath, seuilCMR, True, 0, 0, False, 0, 128, layerFiltreIlotsPath)
-            parameters = {"io.in":layerSeuilPath, "io.out":layerFiltreIlotsPath, "ip.radius":seuilCMR, "ip.suvbool":True, "ip.nodatalabel":0, "ip.undecidedlabel":0, "ip.onlyisolatedpixels":False, "ip.isolatedthreshold":0,  "outputpixeltype":2, "ram":128}
+            parameters = {"io.in":layerSeuilPath, "io.out":layerFiltreIlotsPath, "ip.radius":seuilCMR, "ip.suvbool":True, "ip.nodatalabel":0, "ip.undecidedlabel":0, "ip.onlyisolatedpixels":False, "ip.isolatedthreshold":0,  "outputpixeltype":0}
             processing.run('otb:ClassificationMapRegularization', parameters)
         except:
             messErreur(dlg, "Erreur de traitement par (filtre Classification Map Regularization) de %s !!!" %(layerFiltreIlotsPath)) 

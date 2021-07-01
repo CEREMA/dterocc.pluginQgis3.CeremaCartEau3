@@ -12,7 +12,7 @@ qgisMinimumVersion=3.0
 description=Extraction des zones eau Plugin Cerema
 version=3.0
 author=Christelle Bosc & Gilles Fouvet
-email=Christelle.Bosc@cerema.fr
+email=Arnaud.Ceyte@cerema.fr
 
 about=Zone eau par seuillage et vectorisation utilisation du NDVI ou NDWI (pour image optique) ou utilisation du despeckle (pour image radar).
 

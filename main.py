@@ -8,7 +8,7 @@
         begin                : 2019-01-10
         git sha              : $Format:%H$
         copyright            : (C) 2019 Cerema by Christelle Bosc & Gilles Fouvet
-        email                : Christelle.Bosc@cerema.fr
+        email                : Gilles.Fouvet@cerema.fr
  ***************************************************************************/
 
 /***************************************************************************
@@ -470,8 +470,8 @@ class CeremaCartEau:
     #########################################################################
     def btAboutClicked(self):
         messageAbout1 = "Plugin Cart'Eau V3.0\n Extraction des zones immergées. \n"
-        messageAbout2 = "\n Copyright (©) CEREMA 2019.\n All rights reserved.\n\n"
-        messageAbout3 = "Christelle.Bosc@cerema.fr"
+        messageAbout2 = "\n Copyright (©) CEREMA 2020.\n All rights reserved.\n\n"
+        messageAbout3 = "Arnaud.Ceyte@cerema.fr"
         QMessageBox.information(None, "Information : ", messageAbout1 + messageAbout2 + messageAbout3, QMessageBox.Ok, QMessageBox.NoButton)
         return
     

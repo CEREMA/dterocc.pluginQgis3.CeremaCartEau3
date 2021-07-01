@@ -8,7 +8,7 @@
         begin                : 2019-01-10
         git sha              : $Format:%H$
         copyright            : (C) 2019 Cerema by Christelle Bosc & Gilles Fouvet
-        email                : Christelle.Bosc@cerema.fr
+        email                : Gilles.Fouvet@cerema.fr
  ***************************************************************************/
 
 /***************************************************************************

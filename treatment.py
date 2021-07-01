@@ -10,7 +10,7 @@
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Christelle Bosc & Gilles Fouvet
                                                           
-        email                : Christelle.Bosc@cerema.fr
+        email                : Gilles.Fouvet@cerema.fr
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,12 +27,13 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMessageBox
 
 from qgis.gui import *
-from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorFileWriter, QgsColorRampShader, QgsRasterShader, QgsSingleBandPseudoColorRenderer, QgsWkbTypes, QgsFields, QgsField, QgsPointXY, QgsFeature, QgsMapLayer
+from qgis.core import QgsContrastEnhancement, QgsRaster, QgsRasterLayer, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorFileWriter, QgsColorRampShader, QgsRasterShader, QgsSingleBandPseudoColorRenderer, QgsWkbTypes, QgsFields, QgsField, QgsPointXY, QgsFeature, QgsMapLayer
 from qgis.PyQt.QtCore import QVariant
 
 from osgeo import gdal, ogr,osr
 import os
 import time
+import platform
 
 from .tools import EXT_RASTER, EXT_VECTOR, FORMAT_VECT, EXT_IMAGES_LIST, messInfo, messErreur, layerList, setLayerVisible
 from .processingRaster import computeNdvi, computeNdwi2, despeckeleLee, despeckeleGamma, computeMaskThreshold, filterRaster, polygonizeRaster
@@ -405,7 +406,7 @@ def runThresholding(iface, dlg, conf, layersName, dir_raster_src, dir_dest, ficR
     for layer in layers_list :
         QgsProject.instance().addMapLayer(layer)
         fcn = QgsColorRampShader()
-        fcn.setColorRampType(QgsColorRampShader.Type.Exact)
+        fcn.setColorRampType(QgsColorRampShader.Exact)
         lst = [QgsColorRampShader.ColorRampItem(1, QColor(QColor(0,0,255)))]
         fcn.setColorRampItemList(lst)
         shader = QgsRasterShader()
@@ -456,7 +457,7 @@ def runFilter(iface, dlg, conf, dir_dest, rasterSeuilName, rasterFilterName):
         
         QgsProject.instance().addMapLayer(layer)
         fcn = QgsColorRampShader()
-        fcn.setColorRampType(QgsColorRampShader.Type.Exact)
+        fcn.setColorRampType(QgsColorRampShader.Exact)
         lst = [QgsColorRampShader.ColorRampItem(1, QColor(QColor(255,177,67)))]
         fcn.setColorRampItemList(lst)
         shader = QgsRasterShader()
