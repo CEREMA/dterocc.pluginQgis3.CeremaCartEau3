@@ -29,11 +29,11 @@ from qgis.core import *
 from qgis.gui import *
 
 from osgeo import gdal, ogr,osr
-from gdalconst import *
+from osgeo.gdalconst import *
 import processing
 from processing.algs.gdal.GdalUtils import GdalUtils
 import os, time, glob
-import gdal_merge as gm
+#import gdal_merge as gm
 
 from .tools import FORMAT_IMA, messErreur, getEmpriseFile, getEmpriseImage, getPixelWidthXYImage, getNodataValueImage, getDataTypeImage, getProjectionImage, updateReferenceProjection, roundPixelEmpriseSize
  
@@ -146,7 +146,10 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
 
     # Utilisation de la commande gdal_merge pour fusioner les fichiers image source
     # Pour les parties couvertes par plusieurs images, l'image retenue sera la dernière mergée
-    """
+	
+	# Récupération de la résolution du raster d'entrée
+    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])	
+	
     try:
         #processing.algorithmHelp("gdal:merge")
         #processing.runalg('gdalogr:merge', images_list, False, False, no_data_value, data_type, output_file)
@@ -155,10 +158,8 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
     except :
         messErreur(dlg, "Erreur d'assemblage par gdal:merge de %s !!!"%(output_file))
         return None
+		
     """
-    # Récupération de la résolution du raster d'entrée
-    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])
-    
     # Creation de la commande avec gdal_merge
     command = [ '',
                 '-o',
@@ -170,7 +171,7 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
                 "-ps",
                 str(pixel_size_x),
                 str(pixel_size_y)]
-                
+                  		  
     for ima in images_list :
         command.append(ima)
     
@@ -179,7 +180,8 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
     except:
         messErreur(dlg,u"Erreur de assemblage par gdal_merge de %s !!!"%(output_file))
         return None
-    
+    """
+	
     # Si le fichier de sortie mergé a perdu sa projection on force la projection à la valeur par defaut
     prj = getProjectionImage(output_file)
 

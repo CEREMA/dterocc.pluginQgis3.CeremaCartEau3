@@ -31,7 +31,7 @@ from qgis.gui import *
 import sys,os,glob
 import math
 from osgeo import ogr ,osr, gdal
-from gdalconst import *
+from osgeo.gdalconst import *
 import unicodedata
 
 #########################################################################
