@@ -32,8 +32,11 @@ from osgeo import gdal, ogr,osr
 from osgeo.gdalconst import *
 import processing
 from processing.algs.gdal.GdalUtils import GdalUtils
-import os, time, glob
-#import gdal_merge as gm
+import os, platform, time, glob
+
+os_system = platform.system()
+if 'Linux' in os_system :
+    import gdal_merge as gm
 
 from .tools import FORMAT_IMA, messErreur, getEmpriseFile, getEmpriseImage, getPixelWidthXYImage, getNodataValueImage, getDataTypeImage, getProjectionImage, updateReferenceProjection, roundPixelEmpriseSize
  
@@ -146,42 +149,41 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
 
     # Utilisation de la commande gdal_merge pour fusioner les fichiers image source
     # Pour les parties couvertes par plusieurs images, l'image retenue sera la dernière mergée
-	
-	# Récupération de la résolution du raster d'entrée
-    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])	
-	
-    try:
-        #processing.algorithmHelp("gdal:merge")
-        #processing.runalg('gdalogr:merge', images_list, False, False, no_data_value, data_type, output_file)
-        parameters = {"INPUT":images_list, "PCT":False, "SEPARATE":False, "NODATA_OUTPUT":no_data_value, "DATA_TYPE":data_type, "OUTPUT":output_file}
-        processing.run('gdal:merge', parameters)
-    except :
-        messErreur(dlg, "Erreur d'assemblage par gdal:merge de %s !!!"%(output_file))
-        return None
-		
-    """
-    # Creation de la commande avec gdal_merge
-    command = [ '',
-                '-o',
-                output_file,
-                '-of', 
-                FORMAT_IMA, 
-                '-a_nodata',
-                str(no_data_value),
-                "-ps",
-                str(pixel_size_x),
-                str(pixel_size_y)]
-                  		  
-    for ima in images_list :
-        command.append(ima)
     
-    try:   
-        gm.main(command)
-    except:
-        messErreur(dlg,u"Erreur de assemblage par gdal_merge de %s !!!"%(output_file))
-        return None
-    """
-	
+    # Récupération de la résolution du raster d'entrée
+    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])    
+        
+    if 'Linux' in os_system :
+        # Creation de la commande avec gdal_merge
+        command = [ '',
+                    '-o',
+                    output_file,
+                    '-of', 
+                    FORMAT_IMA, 
+                    '-a_nodata',
+                    str(no_data_value),
+                    "-ps",
+                    str(pixel_size_x),
+                    str(pixel_size_y)]
+                              
+        for ima in images_list :
+            command.append(ima)
+        
+        try:   
+            gm.main(command)
+        except:
+            messErreur(dlg,u"Erreur de assemblage par gdal_merge de %s !!!"%(output_file))
+            return None
+    else :
+        try:
+            #processing.algorithmHelp("gdal:merge")
+            #processing.runalg('gdalogr:merge', images_list, False, False, no_data_value, data_type, output_file)
+            parameters = {"INPUT":images_list, "PCT":False, "SEPARATE":False, "NODATA_OUTPUT":no_data_value, "DATA_TYPE":data_type, "OUTPUT":output_file}
+            processing.run('gdal:merge', parameters)
+        except :
+            messErreur(dlg, "Erreur d'assemblage par gdal:merge de %s !!!"%(output_file))
+            return None
+        
     # Si le fichier de sortie mergé a perdu sa projection on force la projection à la valeur par defaut
     prj = getProjectionImage(output_file)
 
