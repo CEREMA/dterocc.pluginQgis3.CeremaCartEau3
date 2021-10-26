@@ -1142,7 +1142,8 @@ Si vous ne souhaitez pas de filtrage appuyez directement sur le bouton 'Vectoris
                     self.dlg.seuil.setText("0")
                     return
 
-                self.dlg.seuilSlider.setValue(float(value) * 10000.0)
+                #self.dlg.seuilSlider.setValue(float(value) * 10000.0)
+                self.dlg.seuilSlider.setValue(int(value) * 10000)
         return
         
     #########################################################################
