@@ -487,10 +487,10 @@ class CeremaCartEau:
     # FONCTION infoOTBmessageBox()                                          #
     #########################################################################
     def infoOTBmessageBox(self):
-        rep1winOTB = "C:\\OTB-6.6.0-Win64\\bin"
-        rep2winOTB = "C:\\OTB-6.6.0-Win64\\lib\\otb\\applications"
-        rep1linOTB = "/usr/local/OTB-6.6.0-Linux64/bin"
-        rep2linOTB = "/usr/local/OTB-6.6.0-Linux64/lib/otb/applications"
+        rep1winOTB = "C:\\OTB-7.4.0-Win64\\bin"
+        rep2winOTB = "C:\\OTB-7.4.0-Win64\\lib\\otb\\applications"
+        rep1linOTB = "/usr/local/OTB-7.4.0-Linux64/bin"
+        rep2linOTB = "/usr/local/OTB-7.4.0-Linux64/lib/otb/applications"
         mess0 = "Vérifiez que l'installation du plugin Orfeo ToolBox (OTB) est correcte.\n"
         mess1 = "\nVérifiez que les fonctionnalités de OTB sont activées dans QGIS.\nOnglet : Préférences - Options - Traitement - Fournisseurs de traitements - OTB. \
         \nLes répertoires : - OTB folder - et - OTB application folder - doivent être renseignés.\n"
@@ -1143,7 +1143,10 @@ Si vous ne souhaitez pas de filtrage appuyez directement sur le bouton 'Vectoris
                     return
 
                 #self.dlg.seuilSlider.setValue(float(value) * 10000.0)
-                self.dlg.seuilSlider.setValue(int(value) * 10000)
+                try:
+                    self.dlg.seuilSlider.setValue(int(value) * 10000)
+                except:
+                    self.dlg.seuilSlider.setValue(float(value) * 10000.0)
         return
         
     #########################################################################
