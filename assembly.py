@@ -6,7 +6,7 @@
  Cart'Eau. Plugin Cerema.
                               -------------------
         begin                : 2019-01-10
-        modification         : 
+        modification         :
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Christelle Bosc & Gilles Fouvet
 
@@ -35,26 +35,30 @@ from processing.algs.gdal.GdalUtils import GdalUtils
 import os, platform, time, glob
 
 os_system = platform.system()
+
 if 'Linux' in os_system :
-    import gdal_merge as gm
+    try:
+        import gdal_merge as gm
+    except:
+         gm = None
 
 from .tools import FORMAT_IMA, messErreur, getEmpriseFile, getEmpriseImage, getPixelWidthXYImage, getNodataValueImage, getDataTypeImage, getProjectionImage, updateReferenceProjection, roundPixelEmpriseSize
- 
+
 #########################################################################
 # FONCTION assembleRasters()                                            #
-#########################################################################        
+#########################################################################
 def assembleRasters(dlg, empriseVector, repRasterAssemblyList, ext_list, rasterAssembly):
 
     # Emprise de la zone selectionnée
     empr_xmin,empr_xmax,empr_ymin,empr_ymax = getEmpriseFile(empriseVector)
-    
+
     repRasterAssembly_str = ""
     # Recherche des images dans l'emprise du vecteur
     for repertory in repRasterAssemblyList:
         images_find_list, images_error_list = findImagesFile(dlg, repertory, ext_list, empr_xmin, empr_xmax, empr_ymin, empr_ymax)
         repRasterAssembly_str += str(repertory) + "  "
-    
-    # Utilisation d'un fichier temporaire pour  l'assemblage    
+
+    # Utilisation d'un fichier temporaire pour  l'assemblage
     repertory_output = os.path.dirname(rasterAssembly)
     file_name = os.path.splitext(os.path.basename(rasterAssembly))[0]
     extension = os.path.splitext(rasterAssembly)[1]
@@ -71,8 +75,8 @@ def assembleRasters(dlg, empriseVector, repRasterAssemblyList, ext_list, rasterA
                 messErreur(dlg, "Erreur le fichier raster %s ne peut pas être écrasé il est utilisé par un autre processus ou en lecture seul !!!"%(rasterAssembly))
                 return -1
         else :
-           return -1        
-        
+           return -1
+
     if os.path.exists(merge_file_tmp):
         os.remove(merge_file_tmp)
 
@@ -85,30 +89,30 @@ def assembleRasters(dlg, empriseVector, repRasterAssemblyList, ext_list, rasterA
     else :
         messErreur(dlg, "Erreur il n'y a pas de fichier image correspondant à l'emprise dans le(s) répertoire(s) : %s!!!"%(repRasterAssembly_str) )
         return -1
-        
+
     # Assembler les images trouvées
     assemblyImages(dlg, images_find_list, merge_file_tmp, data_type, no_data_value, epsg)
-    
+
     # Découpage du fichier image assemblé par l'emprise
     if os.path.exists(merge_file_tmp) :
         cutImageByVector(dlg, empriseVector, merge_file_tmp, rasterAssembly, data_type, no_data_value, epsg)
     else :
         messErreur(dlg, "Erreur il n'y a pas de fichier assemblé %s à découper !!!"%(rasterAssembly))
         return -1
-        
+
     # Suppression du fichier temporaire
     if os.path.exists(merge_file_tmp):
         os.remove(merge_file_tmp)
 
     return 0
-    
+
 #########################################################################
 # FONCTION findImagesFile()                                             #
-#########################################################################        
+#########################################################################
 def findImagesFile(dlg, repertory, extension_list, empr_xmin, empr_xmax, empr_ymin, empr_ymax):
     images_find_list = []
     images_error_list = []
-    
+
     # Recherche des fichier correspondant à l'extention dans le repertoire de recherche
     for imagefile in glob.glob(repertory + os.sep + '*.*'):
         ok = True
@@ -139,9 +143,9 @@ def findImagesFile(dlg, repertory, extension_list, empr_xmin, empr_xmax, empr_ym
                 # Si l'image et l'emprise sont complement disjointe l'image n'est pas selectionée
                 if not ((imag_xmin > empr_xmax) or (imag_xmax < empr_xmin) or (imag_ymin > empr_ymax) or (imag_ymax < empr_ymin)) :
                     images_find_list.append(imagefile)
-                    
+
     return images_find_list, images_error_list
-    
+
 #########################################################################
 # FONCTION assemblyImages()                                             #
 #########################################################################
@@ -149,28 +153,31 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
 
     # Utilisation de la commande gdal_merge pour fusioner les fichiers image source
     # Pour les parties couvertes par plusieurs images, l'image retenue sera la dernière mergée
-    
+
     # Récupération de la résolution du raster d'entrée
-    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])    
-        
+    pixel_size_x, pixel_size_y = getPixelWidthXYImage(images_list[0])
+
     if 'Linux' in os_system :
         # Creation de la commande avec gdal_merge
         command = [ '',
                     '-o',
                     output_file,
-                    '-of', 
-                    FORMAT_IMA, 
+                    '-of',
+                    FORMAT_IMA,
                     '-a_nodata',
                     str(no_data_value),
                     "-ps",
                     str(pixel_size_x),
                     str(pixel_size_y)]
-                              
+
         for ima in images_list :
             command.append(ima)
-        
-        try:   
-            gm.main(command)
+
+        try:
+            if gm == None :
+                exit_code = os.system("gdal_merge " + command)
+            else :
+                gm.main(command)
         except:
             messErreur(dlg,u"Erreur de assemblage par gdal_merge de %s !!!"%(output_file))
             return None
@@ -183,7 +190,7 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
         except :
             messErreur(dlg, "Erreur d'assemblage par gdal:merge de %s !!!"%(output_file))
             return None
-        
+
     # Si le fichier de sortie mergé a perdu sa projection on force la projection à la valeur par defaut
     prj = getProjectionImage(output_file)
 
@@ -191,7 +198,7 @@ def assemblyImages(dlg, images_list, output_file, data_type, no_data_value, epsg
         updateReferenceProjection(output_file, int(epsg))
 
     return
-    
+
 #########################################################################
 # FONCTION cutImageByVector()                                           #
 #########################################################################
@@ -209,7 +216,7 @@ def cutImageByVector(dlg, cut_shape_file, input_image, output_image, data_type, 
         messErreur(dlg, "Erreur au cours du decoupage de l'image %s par le vecteur %s !!!"%(input_image, cut_shape_file))
         return
     """
-    
+
     # Autre solution avec calcul d'emprise arrondi et optimisé et callé sur les pixels de l'image d'entrée et decoupe avec gdalwarp
 
     # Récupération de la résolution du raster d'entrée
@@ -237,8 +244,8 @@ def cutImageByVector(dlg, cut_shape_file, input_image, output_image, data_type, 
     if ima_ymin > ymin :
         opt_ymin = ima_ymin
     if ima_ymax < ymax :
-        opt_ymax = ima_ymax  
-    
+        opt_ymax = ima_ymax
+
     # Creation de la commande avec gdalwarp
     command = ["gdalwarp",
                "-t_srs",
@@ -248,8 +255,8 @@ def cutImageByVector(dlg, cut_shape_file, input_image, output_image, data_type, 
                str(opt_ymin),
                str(opt_xmax),
                str(opt_ymax),
-               "-tap", 
-               "-multi", 
+               "-tap",
+               "-multi",
                "-co",
                "NUM_THREADS=ALL_CPUS",
                "-tr",
@@ -264,13 +271,12 @@ def cutImageByVector(dlg, cut_shape_file, input_image, output_image, data_type, 
                FORMAT_IMA,
                input_image,
                output_image]
-    
+
     # Execute runGdal
     try :
-        GdalUtils.runGdal(command)    
+        GdalUtils.runGdal(command)
     except:
         messErreur(dlg,"Erreur au cours du decoupage de l'image %s par le vecteur %s  avec gdalwarp!!!"%(input_image, cut_shape_file))
-        return None 
+        return None
 
     return
-    
